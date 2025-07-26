@@ -42,7 +42,7 @@ h1 {
 button,
 input {
     border-radius: 8px;
-    border: 1px solid oklch(48.8% 0.243 264.376);
+    border: 2px solid oklch(48.8% 0.243 264.376);
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 400;

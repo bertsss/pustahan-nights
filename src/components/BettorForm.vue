@@ -1,27 +1,13 @@
 <script setup>
-import { ref } from 'vue'
-
 const emit = defineEmits(['submit'])
-
-const getInitialForm = () => ({
-    name: '',
-    amount: '',
-    mid: '',
-    off: '',
-    soft: '',
-    hard: '',
-})
-
-const form = ref(getInitialForm())
-
-const submit = () => {
-    emit('submit', form.value)
-    form.value = getInitialForm()
-}
+const { form } = defineProps(['form'])
 </script>
 
 <template>
-    <form class="flex flex-col gap-4 p-6 relative" @submit.prevent="submit">
+    <form
+        class="flex flex-col gap-4 p-6 relative"
+        @submit.prevent="$emit('submit')"
+    >
         <span
             @click="$emit('close')"
             class="absolute top-1 right-4 cursor-pointer text-red-600"
