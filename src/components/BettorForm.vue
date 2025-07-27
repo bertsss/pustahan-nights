@@ -13,28 +13,25 @@ const { form } = defineProps(['form'])
             class="absolute top-1 right-4 cursor-pointer text-red-600"
             >x</span
         >
-        <p>Team Info</p>
+        <p>Bettor Info</p>
         <input
             type="text"
             v-model="form.name"
-            placeholder="Team Name"
+            placeholder="Bettor Name"
             required
         />
-        <input type="text" v-model="form.carry" placeholder="Carry" required />
-        <input type="text" v-model="form.mid" placeholder="Mid" required />
-        <input type="text" v-model="form.off" placeholder="Offlane" required />
-        <input
-            type="text"
-            v-model="form.soft"
-            placeholder="Soft Support"
+        <input type="number" v-model="form.amount" min="0" required />
+        <select
+            class="border-2"
+            v-model="form.status"
+            name="status"
+            id="status"
             required
-        />
-        <input
-            type="text"
-            v-model="form.hard"
-            placeholder="Hard Support"
-            required
-        />
+        >
+            <option :value="0">Not yet paid</option>
+            <option :value="1">Payment Received</option>
+            <option :value="2">Paid</option>
+        </select>
         <button type="submit" class="mt-4">Submit</button>
     </form>
 </template>

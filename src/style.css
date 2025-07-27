@@ -40,7 +40,8 @@ h1 {
 }
 
 button,
-input {
+input,
+select {
     border-radius: 8px;
     border: 2px solid oklch(48.8% 0.243 264.376);
     padding: 8px 16px;
@@ -53,7 +54,8 @@ input {
     color: oklch(48.8% 0.243 264.376);
 }
 
-input {
+input,
+select {
     padding: 8px;
     cursor: auto;
     border: 1px solid oklch(44.6% 0.043 257.281);
@@ -62,9 +64,14 @@ input {
 input:focus {
     outline: none;
 }
-/* button:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-} */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type='number'] {
+    -moz-appearance: textfield;
+}
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
