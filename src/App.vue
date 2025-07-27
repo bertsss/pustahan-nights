@@ -162,22 +162,21 @@ watch(
 
 <template>
     <div class="h-full p-[20px] flex flex-col">
-        <div class="flex items-center mb-12">
+        <div class="flex items-center mb-12 relative">
             <img
                 src="./assets/kukuys.png"
                 alt="Kukuys"
-                class="w-[100px] fixed top-[20px] left-[20px]"
+                class="w-[100px] absolute"
             />
-            <div class="flex flex-col grow h-[140px] justify-center">
+            <div class="flex flex-col grow justify-center h-[135px]">
                 <span class="text-6xl font-bold mb-2">Pustahan Nights</span>
                 <p class="text-sm font-medium">by: welpsilog</p>
             </div>
         </div>
 
-        <div class="flex gap-6 justify-center mb-4">
+        <div class="flex gap-6 justify-center mb-4" v-if="teams.length < 2">
             <button
                 class="hover:shadow-md hover:shadow-blue-700/20"
-                v-if="teams.length < 2"
                 @click="openForm = true"
             >
                 Add Team Roster
