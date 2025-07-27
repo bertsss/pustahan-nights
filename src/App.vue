@@ -268,16 +268,15 @@ watch(
                     <p class="text-md flex-1 text-right">
                         {{ bettor.amount.toLocaleString() }}
                     </p>
-                    <p
-                        class="text-md w-20 text-left font-bold"
-                        :class="{
-                            'text-red-400': bettor.status === 0,
-                            'text-blue-400': bettor.status === 1,
-                            'text-green-400': bettor.status === 2,
-                        }"
+                    <select
+                        name="status"
+                        id="status"
+                        v-model="firstTeamBettor[key].status"
                     >
-                        {{ statusMap[bettor.status] }}
-                    </p>
+                        <option :value="0">Unpaid</option>
+                        <option :value="1">Received</option>
+                        <option :value="2">Paid</option>
+                    </select>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
                             class="material-symbols-outlined text-blue-400 cursor-pointer text-xl!"
@@ -323,16 +322,15 @@ watch(
                     <p class="text-md flex-1 text-right">
                         {{ bettor.amount.toLocaleString() }}
                     </p>
-                    <p
-                        class="text-md w-20 text-left font-bold"
-                        :class="{
-                            'text-red-400': bettor.status === 0,
-                            'text-blue-400': bettor.status === 1,
-                            'text-green-400': bettor.status === 2,
-                        }"
+                    <select
+                        name="status"
+                        id="status"
+                        v-model="secondTeamBettor[key].status"
                     >
-                        {{ statusMap[bettor.status] }}
-                    </p>
+                        <option :value="0">Unpaid</option>
+                        <option :value="1">Received</option>
+                        <option :value="2">Paid</option>
+                    </select>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
                             class="material-symbols-outlined text-blue-400 cursor-pointer text-xl!"
