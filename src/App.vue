@@ -8,6 +8,7 @@ const openBettorForm = ref(false)
 const teams = ref([])
 const firstTeamBettor = ref([])
 const secondTeamBettor = ref([])
+const updateIndex = ref(null)
 
 const getInitialForm = () => ({
     name: '',
@@ -35,14 +36,17 @@ const form = ref(getInitialForm())
 const bettorForm = ref(getInitialBettorForm())
 
 const teamFormSubmit = () => {
-    teams.value.push(form.value)
+    if (updateIndex.value !== null) {
+        teams.value.splice(updateIndex.value, 1, form.value)
+    } else {
+        teams.value.push(form.value)
+    }
+
     form.value = getInitialForm()
     openForm.value = false
 }
 
 const bettorFormSubmit = () => {
-    console.log(bettorForm)
-
     if (bettorForm.value.side === 0) {
         firstTeamBettor.value.push(bettorForm.value)
     } else {
@@ -80,6 +84,8 @@ const edit = (index) => {
     form.value.off = off
     form.value.soft = soft
     form.value.hard = hard
+
+    updateIndex.value = index
     openForm.value = true
 }
 
