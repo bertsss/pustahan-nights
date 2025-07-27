@@ -9,10 +9,12 @@ const { form } = defineProps(['form'])
         @submit.prevent="$emit('submit')"
     >
         <span
+            class="material-symbols-outlined absolute top-2 right-2 cursor-pointer text-red-600"
             @click="$emit('close')"
-            class="absolute top-1 right-4 cursor-pointer text-red-600"
-            >x</span
         >
+            close
+        </span>
+
         <p>Team Info</p>
         <input
             type="text"

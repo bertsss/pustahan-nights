@@ -9,10 +9,11 @@ const { form } = defineProps(['form'])
         @submit.prevent="$emit('submit')"
     >
         <span
+            class="material-symbols-outlined absolute top-2 right-2 cursor-pointer text-red-600"
             @click="$emit('close')"
-            class="absolute top-1 right-4 cursor-pointer text-red-600"
-            >x</span
         >
+            close
+        </span>
         <p>Bettor Info</p>
         <input
             type="text"
@@ -28,8 +29,8 @@ const { form } = defineProps(['form'])
             id="status"
             required
         >
-            <option :value="0">Not yet paid</option>
-            <option :value="1">Payment Received</option>
+            <option :value="0">Unpaid</option>
+            <option :value="1">Received</option>
             <option :value="2">Paid</option>
         </select>
         <button type="submit" class="mt-4">Submit</button>

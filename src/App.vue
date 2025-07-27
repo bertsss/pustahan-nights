@@ -43,22 +43,41 @@ const teamFormSubmit = () => {
     }
 
     form.value = getInitialForm()
+    updateIndex.value = null
     openForm.value = false
 }
 
 const bettorFormSubmit = () => {
-    if (bettorForm.value.side === 0) {
-        firstTeamBettor.value.push(bettorForm.value)
+    if (updateIndex.value !== null) {
+        if (bettorForm.value.side === 0) {
+            firstTeamBettor.value.splice(updateIndex.value, 1, bettorForm.value)
+        } else {
+            secondTeamBettor.value.splice(
+                updateIndex.value,
+                1,
+                bettorForm.value
+            )
+        }
     } else {
-        secondTeamBettor.value.push(bettorForm.value)
+        if (bettorForm.value.side === 0) {
+            firstTeamBettor.value.push(bettorForm.value)
+        } else {
+            secondTeamBettor.value.push(bettorForm.value)
+        }
     }
 
     bettorForm.value = getInitialBettorForm()
+    updateIndex.value = null
     openBettorForm.value = false
 }
 
 const remove = (index) => {
     teams.value.splice(index, 1)
+}
+
+const removeBet = (index, side) => {
+    if (side === 0) firstTeamBettor.value.splice(index, 1)
+    else secondTeamBettor.value.splice(index, 1)
 }
 
 const close = () => {
@@ -89,9 +108,31 @@ const edit = (index) => {
     openForm.value = true
 }
 
+const editBet = (index, group) => {
+    const { name, amount, status, side } =
+        group === 0
+            ? firstTeamBettor.value[index]
+            : secondTeamBettor.value[index]
+    bettorForm.value.name = name
+    bettorForm.value.amount = amount
+    bettorForm.value.status = status
+    bettorForm.value.side = side
+
+    updateIndex.value = index
+    openBettorForm.value = true
+}
+
 onMounted(() => {
     const saved = localStorage.getItem('teams')
     if (saved) teams.value = JSON.parse(saved)
+
+    const savedFirstTeamBettor = localStorage.getItem('firstTeamBettor')
+    if (savedFirstTeamBettor)
+        firstTeamBettor.value = JSON.parse(savedFirstTeamBettor)
+
+    const savedSecondTeamBettor = localStorage.getItem('secondTeamBettor')
+    if (savedSecondTeamBettor)
+        secondTeamBettor.value = JSON.parse(savedSecondTeamBettor)
 })
 
 watch(
@@ -101,11 +142,37 @@ watch(
     },
     { deep: true }
 )
+
+watch(
+    firstTeamBettor,
+    (newVal) => {
+        localStorage.setItem('firstTeamBettor', JSON.stringify(newVal))
+    },
+    { deep: true }
+)
+
+watch(
+    secondTeamBettor,
+    (newVal) => {
+        localStorage.setItem('secondTeamBettor', JSON.stringify(newVal))
+    },
+    { deep: true }
+)
 </script>
 
 <template>
     <div class="h-full p-[20px] flex flex-col">
-        <span class="text-5xl mb-8">Dota Nights</span>
+        <div class="flex items-center mb-12">
+            <img
+                src="./assets/kukuys.png"
+                alt="Kukuys"
+                class="w-[100px] fixed top-[20px] left-[20px]"
+            />
+            <div class="flex flex-col grow h-[140px] justify-center">
+                <span class="text-6xl font-bold mb-2">Pustahan Nights</span>
+                <p class="text-sm font-medium">by: welpsilog</p>
+            </div>
+        </div>
 
         <div class="flex gap-6 justify-center mb-4">
             <button
@@ -115,25 +182,9 @@ watch(
             >
                 Add Team Roster
             </button>
-
-            <button
-                v-if="teams.length >= 2"
-                class="border-green-400! text-green-400! basis-[50%] hover:shadow-md hover:shadow-green-400/20"
-                @click="addBettor(0)"
-            >
-                Bet on {{ teams[0].name }}
-            </button>
-
-            <button
-                v-if="teams.length >= 2"
-                class="border-red-400! text-red-400! basis-[50%] hover:shadow-md shadow-red-400/20"
-                @click="addBettor(1)"
-            >
-                Bet on {{ teams[1].name }}
-            </button>
         </div>
 
-        <div class="flex gap-6 mb-10" v-if="teams.length > 0">
+        <div class="flex gap-6 mb-6" v-if="teams.length > 0">
             <div
                 class="flex flex-col border basis-[50%] p-4 rounded-xl gap-2 w-xs text-white"
                 :class="{
@@ -142,21 +193,23 @@ watch(
                 }"
                 v-for="(team, key) in teams"
             >
-                <div class="flex gap-2">
-                    <p class="text-3xl mb-2 text-left font-bold">
+                <div class="flex gap-2 items-center">
+                    <p class="text-3xl text-left font-bold">
                         {{ team.name }}
                     </p>
                     <div class="flex grow justify-end gap-4">
                         <span
+                            class="material-symbols-outlined text-sm text-white font-bold cursor-pointer text-right"
                             @click="edit(key)"
-                            class="text-sm text-white font-bold cursor-pointer text-right"
-                            >edit</span
                         >
+                            edit
+                        </span>
                         <span
+                            class="material-symbols-outlined text-sm text-white font-bold cursor-pointer text-right"
                             @click="remove(key)"
-                            class="text-sm text-white font-bold cursor-pointer text-right"
-                            >remove</span
                         >
+                            delete
+                        </span>
                     </div>
                 </div>
                 <div class="flex">
@@ -182,13 +235,29 @@ watch(
             </div>
         </div>
 
-        <div class="flex gap-6 justify-center mb-8" v-if="teams.length > 0">
-            <div class="border-green-400! basis-[50%]">
-                <p
-                    class="text-xl font-bold mb-6"
-                    v-if="firstTeamBettor.length > 0"
-                >
-                    List of bettors on team {{ teams[0].name }}
+        <div class="flex gap-6 justify-center mb-4" v-if="teams.length >= 2">
+            <button
+                class="border-green-400! text-green-400! basis-[50%] hover:shadow-md hover:shadow-green-400/20"
+                @click="addBettor(0)"
+            >
+                Bet on {{ teams[0].name }}
+            </button>
+
+            <button
+                class="border-red-400! text-red-400! basis-[50%] hover:shadow-md shadow-red-400/20"
+                @click="addBettor(1)"
+            >
+                Bet on {{ teams[1].name }}
+            </button>
+        </div>
+
+        <div class="flex flex-wrap gap-6 mb-8" v-if="teams.length === 2">
+            <div
+                class="border-green-400! basis-[calc(50%-0.75rem)] max-w-[calc(50%-0.75rem)]"
+                v-if="teams.length > 0 && firstTeamBettor.length > 0"
+            >
+                <p class="text-xl font-bold mb-6">
+                    Bets on team {{ teams[0].name }}
                 </p>
                 <div
                     class="flex gap-2 w-full mb-2 items-center"
@@ -213,25 +282,38 @@ watch(
                     </p>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
-                            @click="edit(key)"
-                            class="text-sm text-blue-400 font-bold cursor-pointer text-right"
-                            >edit</span
+                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl! mr-2"
+                            @click="editBet(key, 0)"
                         >
+                            edit
+                        </span>
                         <span
-                            @click="remove(key)"
-                            class="text-sm text-red-400 font-bold cursor-pointer text-right"
-                            >remove</span
+                            class="material-symbols-outlined text-red-400 cursor-pointer text-xl!"
+                            @click="removeBet(key, 0)"
                         >
+                            delete
+                        </span>
                     </div>
                 </div>
+                <p class="font-bold text-2xl mt-6 text-right">
+                    Total Bet:
+                    {{
+                        firstTeamBettor
+                            .reduce((sum, item) => sum + item.amount, 0)
+                            .toLocaleString()
+                    }}
+                </p>
             </div>
 
-            <div class="border-green-400! basis-[50%]">
+            <div
+                class="border-green-400! basis-[calc(50%-0.75rem)] max-w-[calc(50%-0.75rem)] ml-auto"
+                v-if="teams.length > 1 && secondTeamBettor.length > 0"
+            >
                 <p
                     class="text-xl font-bold mb-6"
                     v-if="secondTeamBettor.length > 0"
                 >
-                    List of bettors on team {{ teams[1].name }}
+                    Bets on team {{ teams[1].name }}
                 </p>
                 <div
                     class="flex gap-2 w-full mb-2 items-center"
@@ -256,17 +338,27 @@ watch(
                     </p>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
-                            @click="edit(key)"
-                            class="text-sm text-blue-400 font-bold cursor-pointer text-right"
-                            >edit</span
+                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl! mr-2"
+                            @click="editBet(key, 1)"
                         >
+                            edit
+                        </span>
                         <span
-                            @click="remove(key)"
-                            class="text-sm text-red-400 font-bold cursor-pointer text-right"
-                            >remove</span
+                            class="material-symbols-outlined text-red-400 cursor-pointer text-xl!"
+                            @click="removeBet(key, 1)"
                         >
+                            delete
+                        </span>
                     </div>
                 </div>
+                <p class="font-bold text-2xl mt-6 text-right">
+                    Total Bet:
+                    {{
+                        secondTeamBettor
+                            .reduce((sum, item) => sum + item.amount, 0)
+                            .toLocaleString()
+                    }}
+                </p>
             </div>
         </div>
 
