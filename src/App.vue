@@ -260,18 +260,17 @@ watch(
                     Bets on team {{ teams[0].name }}
                 </p>
                 <div
-                    class="flex gap-2 w-full mb-2 items-center"
+                    class="flex gap-2 w-full items-center hover:bg-stone-100 p-2 rounded-xl"
                     v-for="(bettor, key) in firstTeamBettor"
                 >
-                    <p class="text-md flex-1 text-left">{{ key + 1 }}.</p>
-                    <p class="text-md flex-1 whitespace-nowrap text-left">
-                        {{ bettor.name }}
+                    <p class="text-md w-3xl truncate text-left">
+                        {{ key + 1 }}. {{ bettor.name }}
                     </p>
                     <p class="text-md flex-1 text-right">
                         {{ bettor.amount.toLocaleString() }}
                     </p>
                     <p
-                        class="text-md flex-1 text-left font-bold overflow-ellipsis"
+                        class="text-md w-20 text-left font-bold"
                         :class="{
                             'text-red-400': bettor.status === 0,
                             'text-blue-400': bettor.status === 1,
@@ -282,7 +281,7 @@ watch(
                     </p>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
-                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl! mr-2"
+                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl!"
                             @click="editBet(key, 0)"
                         >
                             edit
@@ -316,18 +315,17 @@ watch(
                     Bets on team {{ teams[1].name }}
                 </p>
                 <div
-                    class="flex gap-2 w-full mb-2 items-center"
+                    class="flex gap-2 w-full items-center hover:bg-stone-100 p-2 rounded-xl"
                     v-for="(bettor, key) in secondTeamBettor"
                 >
-                    <p class="text-md flex-1 text-left">{{ key + 1 }}.</p>
-                    <p class="text-md flex-1 whitespace-nowrap text-left">
-                        {{ bettor.name }}
+                    <p class="text-md w-3xl truncate text-left">
+                        {{ key + 1 }}. {{ bettor.name }}
                     </p>
                     <p class="text-md flex-1 text-right">
                         {{ bettor.amount.toLocaleString() }}
                     </p>
                     <p
-                        class="text-md flex-1 text-left font-bold overflow-ellipsis"
+                        class="text-md w-20 text-left font-bold"
                         :class="{
                             'text-red-400': bettor.status === 0,
                             'text-blue-400': bettor.status === 1,
@@ -338,7 +336,7 @@ watch(
                     </p>
                     <div class="flex flex-1 gap-2 justify-end">
                         <span
-                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl! mr-2"
+                            class="material-symbols-outlined text-blue-400 cursor-pointer text-xl!"
                             @click="editBet(key, 1)"
                         >
                             edit
