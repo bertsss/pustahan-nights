@@ -200,7 +200,10 @@ watch(
                 <div class="w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0"></div>
             </div>
 
-            <div class="flex justify-center" v-if="totalBets > 0">
+            <div
+                class="flex justify-center"
+                v-if="teams.length === 2 && totalBets > 0"
+            >
                 <div
                     class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-2xl shadow-lg"
                 >
