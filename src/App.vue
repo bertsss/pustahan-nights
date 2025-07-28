@@ -35,11 +35,11 @@ const statusMap = {
 const form = ref(getInitialForm())
 const bettorForm = ref(getInitialBettorForm())
 
-const firstTeamTotal = computed(() => 
+const firstTeamTotal = computed(() =>
     firstTeamBettor.value.reduce((sum, item) => sum + item.amount, 0)
 )
 
-const secondTeamTotal = computed(() => 
+const secondTeamTotal = computed(() =>
     secondTeamBettor.value.reduce((sum, item) => sum + item.amount, 0)
 )
 
@@ -175,7 +175,9 @@ watch(
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 lg:p-8">
+    <div
+        class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 lg:p-8"
+    >
         <header class="mb-8 lg:mb-12">
             <div class="flex items-center justify-between mb-6">
                 <img
@@ -183,22 +185,32 @@ watch(
                     alt="Kukuys Logo"
                     class="w-12 h-12 lg:w-16 lg:h-16 shadow-lg flex-shrink-0"
                 />
-                
+
                 <div class="flex-1 text-center">
-                    <h1 class="text-4xl lg:text-6xl font-bold text-gray-900 mb-2">
+                    <h1
+                        class="text-4xl lg:text-6xl font-bold text-gray-900 mb-2"
+                    >
                         Pustahan Nights
                     </h1>
-                    <p class="text-gray-600 text-sm lg:text-base">by: welpsilog</p>
+                    <p class="text-gray-600 text-sm lg:text-base">
+                        by: Kukuys' Devs
+                    </p>
                 </div>
-                
+
                 <div class="w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0"></div>
             </div>
-            
+
             <div class="flex justify-center" v-if="totalBets > 0">
-                <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-2xl shadow-lg">
+                <div
+                    class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-2xl shadow-lg"
+                >
                     <div class="text-center">
-                        <div class="text-sm font-medium opacity-90">Total Pot</div>
-                        <div class="text-2xl lg:text-3xl font-bold">₱{{ totalBets.toLocaleString() }}</div>
+                        <div class="text-sm font-medium opacity-90">
+                            Total Pot
+                        </div>
+                        <div class="text-2xl lg:text-3xl font-bold">
+                            ₱{{ totalBets.toLocaleString() }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,8 +218,12 @@ watch(
 
         <section class="mb-8" v-if="teams.length < 2">
             <div class="text-center">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Setup Teams</h2>
-                <p class="text-gray-600 mb-6">Add team rosters to start betting</p>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                    Setup Teams
+                </h2>
+                <p class="text-gray-600 mb-6">
+                    Add team rosters to start betting
+                </p>
                 <button @click="openForm = true" class="btn-primary">
                     <span class="material-symbols-outlined mr-2">add</span>
                     Add Team Roster
@@ -235,13 +251,17 @@ watch(
                                 @click="edit(key)"
                                 class="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
                             >
-                                <span class="material-symbols-outlined text-sm">edit</span>
+                                <span class="material-symbols-outlined text-sm"
+                                    >edit</span
+                                >
                             </button>
                             <button
                                 @click="remove(key)"
                                 class="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
                             >
-                                <span class="material-symbols-outlined text-sm">delete</span>
+                                <span class="material-symbols-outlined text-sm"
+                                    >delete</span
+                                >
                             </button>
                         </div>
                     </div>
@@ -250,7 +270,9 @@ watch(
                         <div class="flex items-center">
                             <span class="text-lg font-medium w-6">1.</span>
                             <span class="text-lg">{{ team.carry }}</span>
-                            <span class="ml-auto text-sm opacity-75">Carry</span>
+                            <span class="ml-auto text-sm opacity-75"
+                                >Carry</span
+                            >
                         </div>
                         <div class="flex items-center">
                             <span class="text-lg font-medium w-6">2.</span>
@@ -260,17 +282,23 @@ watch(
                         <div class="flex items-center">
                             <span class="text-lg font-medium w-6">3.</span>
                             <span class="text-lg">{{ team.off }}</span>
-                            <span class="ml-auto text-sm opacity-75">Offlane</span>
+                            <span class="ml-auto text-sm opacity-75"
+                                >Offlane</span
+                            >
                         </div>
                         <div class="flex items-center">
                             <span class="text-lg font-medium w-6">4.</span>
                             <span class="text-lg">{{ team.soft }}</span>
-                            <span class="ml-auto text-sm opacity-75">Soft Support</span>
+                            <span class="ml-auto text-sm opacity-75"
+                                >Soft Support</span
+                            >
                         </div>
                         <div class="flex items-center">
                             <span class="text-lg font-medium w-6">5.</span>
                             <span class="text-lg">{{ team.hard }}</span>
-                            <span class="ml-auto text-sm opacity-75">Hard Support</span>
+                            <span class="ml-auto text-sm opacity-75"
+                                >Hard Support</span
+                            >
                         </div>
                     </div>
                 </div>
@@ -283,20 +311,29 @@ watch(
                     @click="addBettor(0)"
                     class="btn-success p-4 text-lg font-semibold"
                 >
-                    <span class="material-symbols-outlined mr-2">trending_up</span>
+                    <span class="material-symbols-outlined mr-2"
+                        >trending_up</span
+                    >
                     Bet on {{ teams[0].name }}
                 </button>
                 <button
                     @click="addBettor(1)"
                     class="btn-danger p-4 text-lg font-semibold"
                 >
-                    <span class="material-symbols-outlined mr-2">trending_up</span>
+                    <span class="material-symbols-outlined mr-2"
+                        >trending_up</span
+                    >
                     Bet on {{ teams[1].name }}
                 </button>
             </div>
         </section>
 
-        <section v-if="teams.length === 2 && (firstTeamBettor.length > 0 || secondTeamBettor.length > 0)">
+        <section
+            v-if="
+                teams.length === 2 &&
+                (firstTeamBettor.length > 0 || secondTeamBettor.length > 0)
+            "
+        >
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div v-if="firstTeamBettor.length > 0" class="card">
                     <div class="flex items-center justify-between mb-6">
@@ -307,7 +344,9 @@ watch(
                             <div class="text-2xl font-bold text-green-600">
                                 ₱{{ firstTeamTotal.toLocaleString() }}
                             </div>
-                            <div class="text-sm text-gray-500">{{ firstTeamBettor.length }} bets</div>
+                            <div class="text-sm text-gray-500">
+                                {{ firstTeamBettor.length }} bets
+                            </div>
                         </div>
                     </div>
 
@@ -318,11 +357,18 @@ watch(
                             class="flex items-center gap-4 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
                             <div class="flex-1">
-                                <div class="font-medium text-gray-900">{{ bettor.name }}</div>
+                                <div class="font-medium text-gray-900">
+                                    {{ bettor.name }}
+                                </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-bold text-gray-900">₱{{ bettor.amount.toLocaleString() }}</div>
-                                <span class="status-badge" :class="statusMap[bettor.status].class">
+                                <div class="font-bold text-gray-900">
+                                    ₱{{ bettor.amount.toLocaleString() }}
+                                </div>
+                                <span
+                                    class="status-badge"
+                                    :class="statusMap[bettor.status].class"
+                                >
                                     {{ statusMap[bettor.status].label }}
                                 </span>
                             </div>
@@ -339,13 +385,19 @@ watch(
                                     @click="editBet(key, 0)"
                                     class="p-1 text-blue-500 hover:bg-blue-50 rounded"
                                 >
-                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                    <span
+                                        class="material-symbols-outlined text-sm"
+                                        >edit</span
+                                    >
                                 </button>
                                 <button
                                     @click="removeBet(key, 0)"
                                     class="p-1 text-red-500 hover:bg-red-50 rounded"
                                 >
-                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                    <span
+                                        class="material-symbols-outlined text-sm"
+                                        >delete</span
+                                    >
                                 </button>
                             </div>
                         </div>
@@ -361,7 +413,9 @@ watch(
                             <div class="text-2xl font-bold text-red-600">
                                 ₱{{ secondTeamTotal.toLocaleString() }}
                             </div>
-                            <div class="text-sm text-gray-500">{{ secondTeamBettor.length }} bets</div>
+                            <div class="text-sm text-gray-500">
+                                {{ secondTeamBettor.length }} bets
+                            </div>
                         </div>
                     </div>
 
@@ -372,11 +426,18 @@ watch(
                             class="flex items-center gap-4 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                         >
                             <div class="flex-1">
-                                <div class="font-medium text-gray-900">{{ bettor.name }}</div>
+                                <div class="font-medium text-gray-900">
+                                    {{ bettor.name }}
+                                </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-bold text-gray-900">₱{{ bettor.amount.toLocaleString() }}</div>
-                                <span class="status-badge" :class="statusMap[bettor.status].class">
+                                <div class="font-bold text-gray-900">
+                                    ₱{{ bettor.amount.toLocaleString() }}
+                                </div>
+                                <span
+                                    class="status-badge"
+                                    :class="statusMap[bettor.status].class"
+                                >
                                     {{ statusMap[bettor.status].label }}
                                 </span>
                             </div>
@@ -393,13 +454,19 @@ watch(
                                     @click="editBet(key, 1)"
                                     class="p-1 text-blue-500 hover:bg-blue-50 rounded"
                                 >
-                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                    <span
+                                        class="material-symbols-outlined text-sm"
+                                        >edit</span
+                                    >
                                 </button>
                                 <button
                                     @click="removeBet(key, 1)"
                                     class="p-1 text-red-500 hover:bg-red-50 rounded"
                                 >
-                                    <span class="material-symbols-outlined text-sm">delete</span>
+                                    <span
+                                        class="material-symbols-outlined text-sm"
+                                        >delete</span
+                                    >
                                 </button>
                             </div>
                         </div>
@@ -450,7 +517,9 @@ watch(
     z-index: 100;
 }
 
-.btn-primary, .btn-success, .btn-danger {
+.btn-primary,
+.btn-success,
+.btn-danger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
