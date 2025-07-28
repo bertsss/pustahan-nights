@@ -407,7 +407,10 @@ watch(
                     </div>
                 </div>
 
-                <div v-if="secondTeamBettor.length > 0" class="card">
+                <div
+                    v-if="secondTeamBettor.length > 0"
+                    class="card col-start-1 lg:col-start-2"
+                >
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-gray-900">
                             {{ teams[1].name }} Bets
