@@ -9,15 +9,29 @@ const teams = ref([])
 const firstTeamBettor = ref([])
 const secondTeamBettor = ref([])
 const updateIndex = ref(null)
+const gameMode = ref(null) // 'dota2' or 'csgo'
 
-const getInitialForm = () => ({
-    name: '',
-    carry: '',
-    mid: '',
-    off: '',
-    soft: '',
-    hard: '',
-})
+const getInitialForm = () => {
+    if (gameMode.value === 'csgo') {
+        return {
+            name: '',
+            player1: '',
+            player2: '',
+            player3: '',
+            player4: '',
+            player5: '',
+        }
+    } else {
+        return {
+            name: '',
+            carry: '',
+            mid: '',
+            off: '',
+            soft: '',
+            hard: '',
+        }
+    }
+}
 
 const getInitialBettorForm = () => ({
     name: '',
@@ -110,13 +124,22 @@ const addBettor = (index) => {
 }
 
 const edit = (index) => {
-    const { name, carry, mid, off, soft, hard } = teams.value[index]
-    form.value.name = name
-    form.value.carry = carry
-    form.value.mid = mid
-    form.value.off = off
-    form.value.soft = soft
-    form.value.hard = hard
+    const team = teams.value[index]
+    form.value.name = team.name
+    
+    if (gameMode.value === 'csgo') {
+        form.value.player1 = team.player1
+        form.value.player2 = team.player2
+        form.value.player3 = team.player3
+        form.value.player4 = team.player4
+        form.value.player5 = team.player5
+    } else {
+        form.value.carry = team.carry
+        form.value.mid = team.mid
+        form.value.off = team.off
+        form.value.soft = team.soft
+        form.value.hard = team.hard
+    }
 
     updateIndex.value = index
     openForm.value = true
@@ -136,7 +159,45 @@ const editBet = (index, group) => {
     openBettorForm.value = true
 }
 
+const clearAllBets = () => {
+    if (confirm('Are you sure you want to clear all bets? This action cannot be undone.')) {
+        firstTeamBettor.value = []
+        secondTeamBettor.value = []
+    }
+}
+
+const selectGameMode = (mode) => {
+    gameMode.value = mode
+}
+
+const resetApp = () => {
+    if (confirm('Are you sure? This will reset everything including teams and bets.')) {
+        gameMode.value = null
+        teams.value = []
+        firstTeamBettor.value = []
+        secondTeamBettor.value = []
+        form.value = getInitialForm()
+    }
+}
+
+const goBackToGameSelection = () => {
+    if (teams.length > 0 || firstTeamBettor.value.length > 0 || secondTeamBettor.value.length > 0) {
+        if (confirm('Go back to game selection? This will clear current teams and bets.')) {
+            gameMode.value = null
+            teams.value = []
+            firstTeamBettor.value = []
+            secondTeamBettor.value = []
+            form.value = getInitialForm()
+        }
+    } else {
+        gameMode.value = null
+    }
+}
+
 onMounted(() => {
+    const savedGameMode = localStorage.getItem('gameMode')
+    if (savedGameMode) gameMode.value = savedGameMode
+
     const saved = localStorage.getItem('teams')
     if (saved) teams.value = JSON.parse(saved)
 
@@ -172,6 +233,17 @@ watch(
     },
     { deep: true }
 )
+
+watch(
+    gameMode,
+    (newVal) => {
+        if (newVal) {
+            localStorage.setItem('gameMode', newVal)
+        } else {
+            localStorage.removeItem('gameMode')
+        }
+    }
+)
 </script>
 
 <template>
@@ -197,7 +269,31 @@ watch(
                     </p>
                 </div>
 
-                <div class="w-12 h-12 lg:w-16 lg:h-16 flex-shrink-0"></div>
+                <div class="w-auto flex-shrink-0">
+                    <button
+                        v-if="gameMode && (firstTeamBettor.length > 0 || secondTeamBettor.length > 0)"
+                        @click="clearAllBets"
+                        class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-300 hover:border-red-300"
+                        title="Clear all bets"
+                    >
+                        Clear Bets
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-center mb-4" v-if="gameMode">
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <span class="material-symbols-outlined text-lg">
+                        {{ gameMode === 'dota2' ? 'sports_esports' : 'sports_esports' }}
+                    </span>
+                    <span class="font-medium">{{ gameMode === 'dota2' ? 'Dota 2' : 'CS:GO' }}</span>
+                    <button
+                        @click="goBackToGameSelection"
+                        class="ml-2 text-xs px-2 py-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                    >
+                        Change Game
+                    </button>
+                </div>
             </div>
 
             <div
@@ -219,7 +315,48 @@ watch(
             </div>
         </header>
 
-        <section class="mb-8" v-if="teams.length < 2">
+        <!-- Game Mode Selection -->
+        <section class="mb-8" v-if="!gameMode">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                    Choose Your Game
+                </h2>
+                <p class="text-gray-600 mb-8">
+                    Select the game mode to get started
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-2xl mx-auto">
+                    <button
+                        @click="selectGameMode('dota2')"
+                        class="game-mode-btn dota2-btn group"
+                    >
+                        <div class="game-icon">
+                            <img src="/dota2.png" alt="Dota 2" class="game-image" />
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">Dota 2</h3>
+                            <p class="game-desc">5 Players with Roles</p>
+                            <p class="game-roles">Carry • Mid • Offlane • Support</p>
+                        </div>
+                    </button>
+                    
+                    <button
+                        @click="selectGameMode('csgo')"
+                        class="game-mode-btn csgo-btn group"
+                    >
+                        <div class="game-icon">
+                            <img src="/csgo.png" alt="CS:GO" class="game-image" />
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">CS:GO</h3>
+                            <p class="game-desc">5 Players, No Roles</p>
+                            <p class="game-roles">Simple Team Setup</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8" v-if="gameMode && teams.length < 2">
             <div class="text-center">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">
                     Setup Teams
@@ -270,39 +407,58 @@ watch(
                     </div>
 
                     <div class="space-y-3">
-                        <div class="flex items-center">
-                            <span class="text-lg font-medium w-6">1.</span>
-                            <span class="text-lg">{{ team.carry }}</span>
-                            <span class="ml-auto text-sm opacity-75"
-                                >Carry</span
-                            >
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-lg font-medium w-6">2.</span>
-                            <span class="text-lg">{{ team.mid }}</span>
-                            <span class="ml-auto text-sm opacity-75">Mid</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-lg font-medium w-6">3.</span>
-                            <span class="text-lg">{{ team.off }}</span>
-                            <span class="ml-auto text-sm opacity-75"
-                                >Offlane</span
-                            >
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-lg font-medium w-6">4.</span>
-                            <span class="text-lg">{{ team.soft }}</span>
-                            <span class="ml-auto text-sm opacity-75"
-                                >Soft Support</span
-                            >
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-lg font-medium w-6">5.</span>
-                            <span class="text-lg">{{ team.hard }}</span>
-                            <span class="ml-auto text-sm opacity-75"
-                                >Hard Support</span
-                            >
-                        </div>
+                        <!-- Dota 2 Team Display -->
+                        <template v-if="gameMode === 'dota2'">
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">1.</span>
+                                <span class="text-lg">{{ team.carry }}</span>
+                                <span class="ml-auto text-sm opacity-75">Carry</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">2.</span>
+                                <span class="text-lg">{{ team.mid }}</span>
+                                <span class="ml-auto text-sm opacity-75">Mid</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">3.</span>
+                                <span class="text-lg">{{ team.off }}</span>
+                                <span class="ml-auto text-sm opacity-75">Offlane</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">4.</span>
+                                <span class="text-lg">{{ team.soft }}</span>
+                                <span class="ml-auto text-sm opacity-75">Soft Support</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">5.</span>
+                                <span class="text-lg">{{ team.hard }}</span>
+                                <span class="ml-auto text-sm opacity-75">Hard Support</span>
+                            </div>
+                        </template>
+
+                        <!-- CS:GO Team Display -->
+                        <template v-else-if="gameMode === 'csgo'">
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">1.</span>
+                                <span class="text-lg">{{ team.player1 }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">2.</span>
+                                <span class="text-lg">{{ team.player2 }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">3.</span>
+                                <span class="text-lg">{{ team.player3 }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">4.</span>
+                                <span class="text-lg">{{ team.player4 }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-lg font-medium w-6">5.</span>
+                                <span class="text-lg">{{ team.player5 }}</span>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -328,6 +484,10 @@ watch(
                     >
                     Bet on {{ teams[1].name }}
                 </button>
+            </div>
+            
+            <div class="flex justify-center mt-6" v-if="firstTeamBettor.length > 0 || secondTeamBettor.length > 0">
+                <hr class="w-full max-w-md border-gray-300">
             </div>
         </section>
 
@@ -487,6 +647,7 @@ watch(
         >
             <TeamForm
                 :form="form"
+                :game-mode="gameMode"
                 @submit="teamFormSubmit"
                 @close="close"
                 class="modal-content w-full max-w-md"
@@ -525,7 +686,8 @@ watch(
 
 .btn-primary,
 .btn-success,
-.btn-danger {
+.btn-danger,
+.btn-warning {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -571,6 +733,83 @@ watch(
     background-color: #dc2626;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.game-mode-btn {
+    width: 100%;
+    max-width: 300px;
+    padding: 2rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 1rem;
+    background: white;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.game-mode-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-color: #6366f1;
+}
+
+.game-icon {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.game-mode-btn:hover .game-image {
+    transform: scale(1.1);
+}
+
+.game-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.game-desc {
+    color: #6b7280;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.game-roles {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.dota2-btn:hover {
+    border-color: #059669;
+    background: linear-gradient(to bottom right, #ecfdf5, white);
+}
+
+.csgo-btn:hover {
+    border-color: #dc2626;
+    background: linear-gradient(to bottom right, #fef2f2, white);
 }
 
 .card {

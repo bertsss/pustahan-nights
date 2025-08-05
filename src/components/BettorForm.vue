@@ -1,6 +1,69 @@
 <script setup>
+import { ref, watch } from 'vue'
+
 const emit = defineEmits(['submit', 'close'])
 const { form } = defineProps(['form'])
+
+// Display value for the input field (with commas)
+const displayAmount = ref('')
+
+// Helper function to format number with commas
+const formatNumberWithCommas = (value) => {
+    if (!value) return ''
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+// Helper function to parse K notation and remove commas
+const parseAmount = (value) => {
+    if (!value) return 0
+    
+    // Remove commas and convert to lowercase for easier parsing
+    const cleanValue = value.toString().replace(/,/g, '').toLowerCase()
+    
+    // Handle K notation
+    if (cleanValue.includes('k')) {
+        const numericPart = parseFloat(cleanValue.replace('k', ''))
+        return isNaN(numericPart) ? 0 : numericPart * 1000
+    }
+    
+    // Handle regular numbers
+    const parsed = parseFloat(cleanValue)
+    return isNaN(parsed) ? 0 : parsed
+}
+
+// Initialize display amount when form changes
+watch(() => form.amount, (newAmount) => {
+    if (newAmount && newAmount !== parseAmount(displayAmount.value)) {
+        displayAmount.value = formatNumberWithCommas(newAmount)
+    }
+}, { immediate: true })
+
+// Handle input changes
+const handleAmountInput = (event) => {
+    const inputValue = event.target.value
+    const parsedValue = parseAmount(inputValue)
+    
+    // Update the actual form value
+    form.amount = parsedValue
+    
+    // Update display value with formatting
+    displayAmount.value = formatNumberWithCommas(parsedValue)
+}
+
+// Handle input focus - show raw number without commas for easier editing
+const handleFocus = (event) => {
+    if (form.amount) {
+        event.target.value = form.amount.toString()
+    }
+}
+
+// Handle input blur - format with commas
+const handleBlur = (event) => {
+    const parsedValue = parseAmount(event.target.value)
+    form.amount = parsedValue
+    displayAmount.value = formatNumberWithCommas(parsedValue)
+    event.target.value = displayAmount.value
+}
 </script>
 
 <template>
@@ -41,13 +104,18 @@ const { form } = defineProps(['form'])
                     <span class="input-currency-symbol">₱</span>
                     <input
                         id="bet-amount"
-                        type="number"
-                        v-model="form.amount"
-                        placeholder="0"
-                        min="1"
+                        type="text"
+                        :value="displayAmount"
+                        @input="handleAmountInput"
+                        @focus="handleFocus"
+                        @blur="handleBlur"
+                        placeholder="Enter amount (e.g., 1000 or 1K)"
                         class="form-input with-prefix"
                         required
                     />
+                </div>
+                <div class="mt-1 text-xs text-gray-500">
+                    Use "K" for thousands (e.g., 1K = 1,000, 100K = 100,000)
                 </div>
             </div>
 
