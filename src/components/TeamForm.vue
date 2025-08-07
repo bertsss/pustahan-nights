@@ -1,20 +1,35 @@
 <script setup>
 const emit = defineEmits(['submit', 'close'])
-const { form } = defineProps(['form'])
+const { form, gameMode } = defineProps(['form', 'gameMode'])
 
-const roles = [
+const dota2Roles = [
     { key: 'carry', label: 'Carry (Position 1)', placeholder: 'Enter carry player name' },
     { key: 'mid', label: 'Mid (Position 2)', placeholder: 'Enter mid player name' },
     { key: 'off', label: 'Offlane (Position 3)', placeholder: 'Enter offlane player name' },
     { key: 'soft', label: 'Soft Support (Position 4)', placeholder: 'Enter soft support name' },
     { key: 'hard', label: 'Hard Support (Position 5)', placeholder: 'Enter hard support name' },
 ]
+
+const csgoPlayers = [
+    { key: 'player1', label: 'Player 1', placeholder: 'Enter player 1 name' },
+    { key: 'player2', label: 'Player 2', placeholder: 'Enter player 2 name' },
+    { key: 'player3', label: 'Player 3', placeholder: 'Enter player 3 name' },
+    { key: 'player4', label: 'Player 4', placeholder: 'Enter player 4 name' },
+    { key: 'player5', label: 'Player 5', placeholder: 'Enter player 5 name' },
+]
+
+const currentPlayers = gameMode === 'csgo' ? csgoPlayers : dota2Roles
 </script>
 
 <template>
     <div class="p-6 relative">
         <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-gray-900">Team Roster</h2>
+            <div>
+                <h2 class="text-xl font-bold text-gray-900">Team Roster</h2>
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ gameMode === 'dota2' ? 'Dota 2 - 5 Players with Roles' : 'CS:GO - 5 Players' }}
+                </p>
+            </div>
             <button
                 @click="$emit('close')"
                 class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -42,17 +57,19 @@ const roles = [
             </div>
 
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Player Roster</h3>
+                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    {{ gameMode === 'dota2' ? 'Player Positions' : 'Team Members' }}
+                </h3>
                 
-                <div v-for="role in roles" :key="role.key" class="space-y-2">
-                    <label :for="`role-${role.key}`" class="form-label">
-                        {{ role.label }}
+                <div v-for="player in currentPlayers" :key="player.key" class="space-y-2">
+                    <label :for="`player-${player.key}`" class="form-label">
+                        {{ player.label }}
                     </label>
                     <input
-                        :id="`role-${role.key}`"
+                        :id="`player-${player.key}`"
                         type="text"
-                        v-model="form[role.key]"
-                        :placeholder="role.placeholder"
+                        v-model="form[player.key]"
+                        :placeholder="player.placeholder"
                         class="form-input"
                         required
                     />
